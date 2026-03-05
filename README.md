@@ -1,72 +1,176 @@
-# Medical-Vision-Suite
+# Medical Vision Suite
 
-# Getting Started with Create React App
+Medical Vision Suite is a full-stack AI-assisted screening platform for:
+- Chest X-ray classification
+- Brain MRI tumor classification
+- Skin lesion classification
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+It includes:
+- React frontend for authentication, scan upload, and result/history pages
+- Flask backend API for prediction and user/history management
+- TensorFlow-based model inference and training scripts
+- MySQL persistence for users, login events, and prediction history
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- Role-based registration/login (`doctor`, `technician`)
+- Profile update and password change
+- Unified prediction endpoint for multiple scan types
+- Prediction history with filtering/sorting
+- Stored image uploads and image URL support
+- Optional LAN access for frontend/backend
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Frontend: React, React Router, Axios
+- Backend: Flask, Flask-CORS
+- ML: TensorFlow/Keras, OpenCV, NumPy
+- Database: MySQL (`mysql-connector-python`)
+- Analysis/plots: scikit-learn, Matplotlib, Seaborn
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Project Structure
 
-### `npm test`
+```text
+medical_cnn_project/
+  backend/
+    app.py
+    ml.py
+    db.py
+    config.py
+    utils.py
+    *.h5
+    uploads/
+  frontend/
+    src/
+    public/
+    package.json
+  train_*.py
+  evaluate_*.py
+  predict_*.py
+  requirements.txt
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Prerequisites
 
-### `npm run build`
+- Python 3.10+ recommended
+- Node.js 18+ and npm
+- MySQL 8+
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Backend Setup (Flask)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Create and activate virtual environment:
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-### `npm run eject`
+3. Configure MySQL connection via environment variables (PowerShell example):
+```powershell
+$env:MYSQL_HOST="127.0.0.1"
+$env:MYSQL_PORT="3306"
+$env:MYSQL_USER="root"
+$env:MYSQL_PASSWORD="Root@123"
+$env:MYSQL_DATABASE="medical_cnn"
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. Start backend:
+```bash
+cd backend
+python app.py
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Default backend runs on:
+- `http://127.0.0.1:5000`
+- If configured with `host="0.0.0.0"`, it is accessible on LAN as `http://<your-ip>:5000`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Frontend Setup (React)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. Install frontend dependencies:
+```bash
+cd frontend
+npm install
+```
 
-## Learn More
+2. Start frontend:
+```bash
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Frontend default:
+- `http://localhost:3000`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+API base URL behavior:
+- Uses `REACT_APP_API_BASE_URL` if provided
+- Otherwise uses `http://<browser-hostname>:5000`
 
-### Code Splitting
+Example override:
+```powershell
+$env:REACT_APP_API_BASE_URL="http://192.168.1.20:5000"
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Available API Endpoints
 
-### Analyzing the Bundle Size
+- `POST /auth/register`
+- `POST /auth/login`
+- `GET /auth/profile`
+- `PUT /auth/profile`
+- `POST /auth/change-password`
+- `GET /history`
+- `POST /predict`
+- `GET /uploads/<filename>`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Database Initialization
 
-### Making a Progressive Web App
+On backend startup, `init_db()` ensures required tables exist:
+- `users`
+- `login_events`
+- `predictions`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+It also applies additive schema updates for missing columns when needed.
 
-### Advanced Configuration
+## Model Files Used by Backend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+The backend loads these models from `backend/`:
+- `medical_xray_finetuned.h5`
+- `brain_tumor_mobilenet.h5`
+- `skin_model_mobilenet_v2.h5`
 
-### Deployment
+## Training and Evaluation Scripts
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Training scripts:
+- `train_cnn.py`
+- `train_transfer.py`
+- `train_brain_mobilenet.py`
+- `train_skin.py`
+- `train_skin_mobilenet.py`
+- `train_skin_mobilenet_v2.py`
+- `fine_tune.py`
 
-### `npm run build` fails to minify
+Evaluation scripts:
+- `evaluate_medical_xray.py`
+- `evaluate_brain.py`
+- `evaluate_skin_mobilenet.py`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Prediction utilities:
+- `predict.py`
+- `predict_brain.py`
+- `predict_skin.py`
+- `predict_skin_mobilenet.py`
+
+## Troubleshooting
+
+- `Can't connect to MySQL`: verify MySQL service and env vars.
+- `ModuleNotFoundError`: confirm virtual environment is active and requirements are installed.
+- `CORS/network issue from phone/LAN`: run backend on `0.0.0.0` and open firewall port `5000`.
+- `Model load error`: ensure required `.h5` files are present in `backend/`.
+
+## Notes
+
+- Do not commit large datasets and trained artifacts unless intentionally versioning them.
+- Keep secrets (`.env`, DB passwords, API keys) out of source control.
