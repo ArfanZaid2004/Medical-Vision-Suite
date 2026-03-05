@@ -1,0 +1,10 @@
+flask
+flask-cors
+werkzeug
+numpy
+tensorflow
+opencv-python
+mysql-connector-python
+scikit-learn
+matplotlib
+seaborn
