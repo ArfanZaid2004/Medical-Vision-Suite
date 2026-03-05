@@ -50,6 +50,58 @@ medical_cnn_project/
   requirements.txt
 ```
 
+## UI Screenshots
+
+Place the screenshot files in `docs/screenshots/` using the exact filenames below.
+
+### 1. Authentication: Sign In
+![Sign In Screen](docs/screenshots/01-signin.png)
+*Caption: User sign-in page with role-based access entry.*
+
+### 2. Authentication: Create Account
+![Create Account Screen](docs/screenshots/02-register.png)
+*Caption: Registration page for creating technician/doctor accounts.*
+
+### 3. Dashboard / Home
+![Dashboard Home](docs/screenshots/03-home-dashboard.png)
+*Caption: Main workflow dashboard for selecting scan type (Chest X-ray, Brain MRI, Skin Lesion).*
+
+### 4. Patient Details + Upload
+![Patient Details Page](docs/screenshots/04-patient-details-upload.png)
+*Caption: Patient metadata form and image upload before prediction.*
+
+### 5. Prediction Result: Chest X-ray
+![Chest X-ray Result](docs/screenshots/05-result-chest-xray.png)
+*Caption: Chest X-ray prediction output with confidence score and action controls.*
+
+### 6. Prediction Result: Brain MRI
+![Brain MRI Result](docs/screenshots/06-result-brain-mri.png)
+*Caption: Brain MRI prediction (Glioma) with confidence meter.*
+
+### 7. Prediction Result: Skin Lesion
+![Skin Lesion Result](docs/screenshots/07-result-skin-lesion.png)
+*Caption: Skin lesion classification output (Melanocytic Nevi) with confidence score.*
+
+### 8. Prediction History
+![Prediction History Page](docs/screenshots/08-prediction-history.png)
+*Caption: Historical records with filtering by scan type, disease, date, and patient.*
+
+### 9. History Row Details Modal
+![Prediction Details Modal](docs/screenshots/09-history-details-modal.png)
+*Caption: Detailed modal view for a selected prediction entry, including uploaded scan preview.*
+
+### 10. Profile Menu
+![Profile Dropdown](docs/screenshots/10-profile-dropdown.png)
+*Caption: Header profile menu with quick actions (View Profile, Change Password, Logout).*
+
+### 11. Profile Edit Modal
+![Profile Edit Modal](docs/screenshots/11-profile-edit-modal.png)
+*Caption: User profile update modal for username and account details.*
+
+### 12. Change Password Modal
+![Change Password Modal](docs/screenshots/12-change-password-modal.png)
+*Caption: Secure password update flow with current/new password validation.*
+
 ## Prerequisites
 
 - Python 3.10+ recommended
