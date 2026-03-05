@@ -169,7 +169,8 @@ Prediction utilities:
 - `ModuleNotFoundError`: confirm virtual environment is active and requirements are installed.
 - `CORS/network issue from phone/LAN`: run backend on `0.0.0.0` and open firewall port `5000`.
 - `Model load error`: ensure required `.h5` files are present in `backend/`.
-
+## Project Snippets
+https://github.com/ArfanZaid2004/Medical-Vision-Suite/blob/54d6f33e2c568575dbe37c9b296d8992daac1e11/Screenshot%202026-03-05%20103436.png
 ## Notes
 
 - Do not commit large datasets and trained artifacts unless intentionally versioning them.
