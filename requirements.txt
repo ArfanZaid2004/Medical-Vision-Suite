@@ -8,3 +8,4 @@ mysql-connector-python>=8.4,<9.0
 scikit-learn>=1.4,<2.0
 matplotlib>=3.8,<4.0
 seaborn>=0.13,<1.0
+reportlab>=4.2,<5.0

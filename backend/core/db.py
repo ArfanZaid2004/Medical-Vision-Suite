@@ -1,6 +1,6 @@
 import mysql.connector
 
-from config import DB_CONFIG
+from core.config import DB_CONFIG
 
 
 def get_db_connection():
@@ -80,4 +80,3 @@ def init_db():
     conn.commit()
     cur.close()
     conn.close()
-

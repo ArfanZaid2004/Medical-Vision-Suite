@@ -2,7 +2,7 @@ import os
 
 from flask import request
 
-from config import ALLOWED_EXTENSIONS
+from core.config import ALLOWED_EXTENSIONS
 
 
 def is_allowed_image(filename):
@@ -14,4 +14,3 @@ def build_image_url(filename):
     if not filename:
         return None
     return f"{request.host_url.rstrip('/')}/uploads/{filename}"
-

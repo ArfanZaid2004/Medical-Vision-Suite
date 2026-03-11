@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import "./styles.css";
 import Navbar from "./Navbar";
 import { useToast } from "./ToastContext";
 import { readAuthUser } from "./auth";
-import API_BASE_URL from "./api";
+import apiClient, { getApiError } from "./apiClient";
 
 function HistoryPage() {
   const defaultFilters = {
@@ -31,6 +30,7 @@ function HistoryPage() {
   const [sortBy, setSortBy] = useState("date_desc");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [downloadingRowId, setDownloadingRowId] = useState(null);
   const { showToast } = useToast();
 
   const getScanTypeKey = (scanType) => {
@@ -124,12 +124,12 @@ function HistoryPage() {
         return;
       }
       try {
-        const res = await axios.get(`${API_BASE_URL}/history`, {
+        const res = await apiClient.get("/history", {
           params: { user_id: user.id },
         });
         setRows(res.data);
       } catch (err) {
-        const message = err?.response?.data?.error || "Failed to load history";
+        const message = getApiError(err, "Failed to load history");
         setError(message);
         showToast(message, "error");
       } finally {
@@ -138,6 +138,45 @@ function HistoryPage() {
     };
     load();
   }, [navigate, showToast, user?.id]);
+
+  const handleDownloadPdf = async (row) => {
+    setDownloadingRowId(row.id);
+    try {
+      const response = await apiClient.post(
+        "/report/pdf",
+        {
+          patient: {
+            name: row.patient_name || "Unknown",
+            age: row.patient_age ?? "-",
+            sex: row.patient_sex || "-",
+          },
+          result: {
+            type: row.scan_type || "-",
+            prediction: row.prediction || "-",
+            confidence: Number(row.confidence) || 0,
+          },
+          image_url: row.image_url || null,
+          gradcam: null,
+        },
+        { responseType: "blob" }
+      );
+
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      const safeName = (row.patient_name || "patient").replace(/\s+/g, "_").toLowerCase();
+      anchor.href = url;
+      anchor.download = `report_${safeName}_${row.id}.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      showToast(getApiError(err, "Unable to generate PDF report"), "error");
+    } finally {
+      setDownloadingRowId(null);
+    }
+  };
 
   return (
     <div className="page">
@@ -290,13 +329,25 @@ function HistoryPage() {
                         <td>{row.scan_type}</td>
                         <td>{row.prediction}</td>
                         <td>
-                          <button
-                            type="button"
-                            className="ghost-btn"
-                            onClick={() => setSelectedRow(row)}
-                          >
-                            View
-                          </button>
+                          <div className="history-action-buttons">
+                            <button
+                              type="button"
+                              className="ghost-btn"
+                              onClick={() => setSelectedRow(row)}
+                            >
+                              View
+                            </button>
+                            <button
+                              type="button"
+                              className="ghost-btn"
+                              onClick={() => handleDownloadPdf(row)}
+                              disabled={downloadingRowId === row.id}
+                              title="Download Report"
+                              aria-label="Download Report"
+                            >
+                              {downloadingRowId === row.id ? "... Preparing" : "↓ Download"}
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

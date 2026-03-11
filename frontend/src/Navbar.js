@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { clearAuthUser, readAuthUser, writeAuthUser } from "./auth";
 import { useToast } from "./ToastContext";
-import API_BASE_URL from "./api";
+import apiClient, { getApiError } from "./apiClient";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -64,7 +63,7 @@ function Navbar() {
   const openProfile = async () => {
     closeMenu();
     try {
-      const res = await axios.get(`${API_BASE_URL}/auth/profile`, {
+      const res = await apiClient.get("/auth/profile", {
         params: { user_id: user?.id },
       });
       setProfileForm({
@@ -74,7 +73,7 @@ function Navbar() {
       });
       setShowProfileModal(true);
     } catch (err) {
-      showToast(err?.response?.data?.error || "Failed to load profile", "error");
+      showToast(getApiError(err, "Failed to load profile"), "error");
     }
   };
 
@@ -85,16 +84,16 @@ function Navbar() {
       return;
     }
     try {
-      const res = await axios.put(`${API_BASE_URL}/auth/profile`, {
+      const res = await apiClient.put("/auth/profile", {
         user_id: user?.id,
         username,
       });
       writeAuthUser(res.data.user);
+      setProfileForm((prev) => ({ ...prev, username: res.data?.user?.username || username }));
       setShowProfileModal(false);
       showToast("Profile updated", "success");
-      window.location.reload();
     } catch (err) {
-      showToast(err?.response?.data?.error || "Failed to update profile", "error");
+      showToast(getApiError(err, "Failed to update profile"), "error");
     }
   };
 
@@ -122,7 +121,7 @@ function Navbar() {
       return;
     }
     try {
-      await axios.post(`${API_BASE_URL}/auth/change-password`, {
+      await apiClient.post("/auth/change-password", {
         user_id: user?.id,
         current_password: passwordForm.currentPassword,
         new_password: passwordForm.newPassword,
@@ -130,7 +129,7 @@ function Navbar() {
       setShowPasswordModal(false);
       showToast("Password changed successfully", "success");
     } catch (err) {
-      showToast(err?.response?.data?.error || "Failed to change password", "error");
+      showToast(getApiError(err, "Failed to change password"), "error");
     }
   };
 
@@ -142,13 +141,13 @@ function Navbar() {
     <>
       <header className="app-header">
         <div className="app-header-left">
-          <div className="brand">
-            <span className="brand-mark" aria-hidden="true" />
+          <button type="button" className="brand brand-button" onClick={() => navigate("/upload")}>
+            <img src="/medical-vision-mark.svg" alt="Medical Vision Suite" className="brand-logo" />
             <div>
               <p className="eyebrow">Medical Vision Suite</p>
               <p className="brand-subtitle">Clinical AI Screening Workspace</p>
             </div>
-          </div>
+          </button>
         </div>
         <nav className={`app-nav ${navStateClass}`}>
           <button

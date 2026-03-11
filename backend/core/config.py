@@ -1,6 +1,6 @@
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 IMG_SIZE = 224
@@ -12,4 +12,3 @@ DB_CONFIG = {
     "password": os.getenv("MYSQL_PASSWORD", "Root@123"),
     "database": os.getenv("MYSQL_DATABASE", "medical_cnn"),
 }
-

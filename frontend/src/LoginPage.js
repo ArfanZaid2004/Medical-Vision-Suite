@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import API_BASE_URL from "./api";
 import "./styles.css";
 import { useToast } from "./ToastContext";
 import { writeAuthUser } from "./auth";
+import apiClient, { getApiError } from "./apiClient";
 
 function LoginPage() {
   const [mode, setMode] = useState("login");
@@ -28,7 +27,7 @@ function LoginPage() {
           return;
         }
 
-        await axios.post(`${API_BASE_URL}/auth/register`, {
+        await apiClient.post("/auth/register", {
           username,
           email,
           password,
@@ -38,7 +37,7 @@ function LoginPage() {
         setConfirmPassword("");
         setMode("login");
       } else {
-        const res = await axios.post(`${API_BASE_URL}/auth/login`, {
+        const res = await apiClient.post("/auth/login", {
           email,
           password,
         });
@@ -46,7 +45,7 @@ function LoginPage() {
         navigate("/upload");
       }
     } catch (err) {
-      showToast(err?.response?.data?.error || "Request failed", "error");
+      showToast(getApiError(err, "Request failed"), "error");
     } finally {
       setLoading(false);
     }
@@ -55,9 +54,32 @@ function LoginPage() {
   return (
     <div className="page auth-page">
       <div className="shell auth-shell">
+        <section className="auth-intro">
+          <p className="auth-intro-kicker">Medical Vision Suite</p>
+          <h1 className="auth-intro-title">AI-Powered Multi-Scan Screening Workspace</h1>
+          <p className="auth-intro-text">
+            Streamline chest X-ray, brain MRI, and skin lesion analysis in one clinical workflow
+            with confidence scoring, report download, and prediction history.
+          </p>
+          <div className="auth-intro-points">
+            <div className="auth-intro-point">
+              <strong>3</strong>
+              <span>Scan types</span>
+            </div>
+            <div className="auth-intro-point">
+              <strong>Role</strong>
+              <span>Doctor & Technician</span>
+            </div>
+            <div className="auth-intro-point">
+              <strong>PDF</strong>
+              <span>Clinical report export</span>
+            </div>
+          </div>
+        </section>
+
         <div className="auth-card auth-simple">
           <div className="auth-login-brand">
-            <p className="auth-login-title">Medical Vision Suite</p>
+            <img src="/medical-vision-logo.svg" alt="Medical Vision Suite" className="auth-logo-full" />
           </div>
           <h1>{mode === "login" ? "Sign in" : "Create account"}</h1>
           <p className="subtitle">

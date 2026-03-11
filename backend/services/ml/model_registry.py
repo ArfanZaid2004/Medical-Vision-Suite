@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 
-from config import BASE_DIR, IMG_SIZE
+from core.config import BASE_DIR, IMG_SIZE
 
 # Load trained models once at startup.
 CHEST_MODEL = tf.keras.models.load_model(

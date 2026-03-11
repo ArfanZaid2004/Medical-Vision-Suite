@@ -1,11 +1,10 @@
 import React, { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
-import API_BASE_URL from "./api";
 import Navbar from "./Navbar";
 import "./styles.css";
 import { useToast } from "./ToastContext";
 import { readAuthUser } from "./auth";
+import apiClient, { getApiError } from "./apiClient";
 
 function DetailsPage() {
   const location = useLocation();
@@ -49,15 +48,22 @@ function DetailsPage() {
     formData.append("patient_sex", patientSex);
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/predict`, formData);
-      navigate("/result", {
-        state: {
-          result: res.data,
-          image: URL.createObjectURL(file),
+      const res = await apiClient.post("/predict", formData);
+      const nextState = {
+        result: res.data,
+        image: res.data.image_url || URL.createObjectURL(file),
+        patient: {
+          name: patientName,
+          age: patientAge,
+          sex: patientSex,
         },
+      };
+      sessionStorage.setItem("latest_result_state", JSON.stringify(nextState));
+      navigate("/result", {
+        state: nextState,
       });
     } catch (err) {
-      showToast(err?.response?.data?.error || "Prediction failed", "error");
+      showToast(getApiError(err, "Prediction failed"), "error");
     }
   };
 
